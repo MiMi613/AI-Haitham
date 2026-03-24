@@ -172,7 +172,7 @@ public class Services {
 //        }
 //    }
 
-    public String readFromPath(String path) throws IOException {
+    public static String readFromPath(String path) throws IOException {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
 
         if (inputStream == null) {
