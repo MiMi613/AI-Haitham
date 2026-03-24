@@ -7,6 +7,7 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -156,18 +157,35 @@ public class Services {
         System.out.println("Successfully wrote to " + resourcePath.toString());
     }
 
-    public static String readFromPath(String path) throws URISyntaxException, IOException {
+//    public static String readFromPath(String path) throws URISyntaxException, IOException {
+//
+//        try {
+//            URL location = Services.class.getProtectionDomain().getCodeSource().getLocation();
+//            Path classPath = Paths.get(location.toURI());
+//            Path resourcePath = classPath.resolve(path).normalize();
+//
+//            String content = new String(Files.readAllBytes(resourcePath), StandardCharsets.UTF_8);
+//            return content;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
-        try {
-            URL location = Services.class.getProtectionDomain().getCodeSource().getLocation();
-            Path classPath = Paths.get(location.toURI());
-            Path resourcePath = classPath.resolve(path).normalize();
+    public String readFromPath(String path) throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
 
-            String content = new String(Files.readAllBytes(resourcePath), StandardCharsets.UTF_8);
-            return content;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        if (inputStream == null) {
+            throw new IllegalArgumentException("Resource not found: " + path);
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            return content.toString();
         }
     }
 
