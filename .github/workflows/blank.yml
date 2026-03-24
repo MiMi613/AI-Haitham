@@ -20,6 +20,16 @@ jobs:
           java-version: '17'   # e.g. 17, 21, 11 — run `java -version` to check
           distribution: 'temurin'
 
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+          fetch-depth: 0
+
+      - name: Build Maven module
+        working-directory: 'AI-Haitham API simple'
+        run: mvn clean install
+
       - name: Build with Maven
         run: cd "AI-Haitham API simple" && mvn compile
 
