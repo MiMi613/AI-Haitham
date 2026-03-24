@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
-        run: mvn compile
+        run: cd "AI-Haitham API simple" && mvn compile
 
       - name: Run with Maven
-        run: mvn exec:java -Dexec.mainClass="Main.java"   # e.g. "com.example.Main"
+        run: cd "AI-Haitham API simple" && mvn exec:java -Dexec.mainClass="Main.java"   # e.g. "com.example.Main"
