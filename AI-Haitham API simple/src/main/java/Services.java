@@ -173,7 +173,7 @@ public class Services {
 //    }
 
     public static String readFromPath(String path) throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
+        InputStream inputStream = Services.class.getClassLoader().getResourceAsStream(path);
 
         if (inputStream == null) {
             throw new IllegalArgumentException("Resource not found: " + path);
