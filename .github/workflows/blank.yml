@@ -17,11 +17,12 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'   # e.g. 17, 21, 11 — run `java -version` to check
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Build with Maven
-        run: cd "AI-Haitham API simple" && mvn compile
+        run: cd "AI-Haitham API simple" && mvn compile && ls target/classes/HaithamPrompt.txt
+
 
       - name: Run with Maven
         run: cd "AI-Haitham API simple" && mvn exec:java -Dexec.mainClass="Main.java"   # e.g. "com.example.Main"
