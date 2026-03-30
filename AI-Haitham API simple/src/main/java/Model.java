@@ -28,6 +28,8 @@ public class Model {
     private boolean stream = true;
     private boolean running = false;
     private String introduction = "Hi, how can I help?";
+    private String inputIndication = ": ";
+    private String speechIndication = ">_";
 
     public Model() throws JsonProcessingException {
         this.conversationHistory = new ArrayList<>();
@@ -36,6 +38,10 @@ public class Model {
         this.initJson();
 
         conversationHistory.add(new Message("system", systemPrompt));
+    }
+
+    public void setInputIndication(String inputIndication) {
+        this.inputIndication = inputIndication;
     }
 
     public void setIntroduction(String introduction) {
@@ -105,11 +111,12 @@ public class Model {
         httpPost.setEntity(new StringEntity(getJson(), StandardCharsets.UTF_8));
 
         //sending API
-        String response;
+        String response = speechIndication;
         if (print){
-            response = Services.applyAPIRequest(httpPost, chunk -> System.out.print(chunk));
+            System.out.print(response);
+            response += Services.applyAPIRequest(httpPost, chunk -> System.out.print(chunk));
         } else {
-            response = Services.applyAPIRequest(httpPost);
+            response += Services.applyAPIRequest(httpPost);
         }
         conversationHistory.add(new Message("assistant", response));
         debugPrint("added to history: " + response);
@@ -134,11 +141,15 @@ public class Model {
         // System.out.println(message);
     }
 
+    public void setSpeechIndication(String newSpeechIndication) {
+        this.speechIndication  = newSpeechIndication;
+    }
+
     public void visit() throws IOException {
         System.out.println(introduction);
         running = true;
         while(running){
-            System.out.print(">_");
+            System.out.print(inputIndication);
             String input = scanner.nextLine();
             debugPrint(input);
             if (input.charAt(0) == '/'){
