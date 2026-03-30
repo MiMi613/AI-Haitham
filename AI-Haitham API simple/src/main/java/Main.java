@@ -18,22 +18,42 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
-        Model AlHaitham = new Model();
+        Model AlHaitham = AlHaitham();
+        Model Lisa = Lisa();
+
+        Scanner sc = new  Scanner(System.in);
+        String host = sc.nextLine();
+        switch (host){
+            case "AlHaitham": AlHaitham.visit(); break;
+            case "Lisa": Lisa.visit(); break;
+            default: System.out.println("Invalid input");
+        }
+    }
+
+    static Model AlHaitham() throws IOException {
+        Model ret = new Model();
         String pathToCharacter = "HaithamPrompt.txt";
         String Prompt = Services.readFromPath(pathToCharacter);
-        AlHaitham.setSystemPrompt(Prompt);
-        AlHaitham.setIntroduction("I hope you hesitated before contacting me. What do you need?");
-        System.out.println("Welcome to the Al-Haitham API");
-        AlHaitham.visit();
+        ret.setSystemPrompt(Prompt);
+        ret.setIntroduction("I hope you hesitated before contacting me. What do you need?");
+        ret.setSpeechIndication("Al-Haitham: ");
+        return ret;
+    }
+
+    static Model Lisa() throws IOException {
+        Model ret = new Model();
+        String pathToCharacter = "LisaPrompt.txt";
+        String Prompt = Services.readFromPath(pathToCharacter);
+        ret.setSystemPrompt(Prompt);
+        ret.setIntroduction("Hey cutie, would you like to join me for an afternoon tea?");
+        ret.setSpeechIndication("Lisa:       ");
+        return ret;
     }
 
 }

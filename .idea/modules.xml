@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AI-Haitham.iml" filepath="$PROJECT_DIR$/.idea/AI-Haitham.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AI-Haitham API simple/LLMWT.iml" filepath="$PROJECT_DIR$/AI-Haitham API simple/LLMWT.iml" />
     </modules>
   </component>
 </project>
