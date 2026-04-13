@@ -1,28 +1,28 @@
-name: CI
+name: Java CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - "**"
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AI-Haitham API simple
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: "17"
+          cache: maven
 
       - name: Build with Maven
-        run: cd "AI-Haitham API simple" && mvn compile && ls target/classes/HaithamPrompt.txt
-
-
-      - name: Run with Maven
-        run: cd "AI-Haitham API simple" && mvn exec:java -Dexec.mainClass="Main.java"   # e.g. "com.example.Main"
+        run: mvn -B clean verify
