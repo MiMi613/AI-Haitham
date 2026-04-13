@@ -44,6 +44,10 @@ public class Model {
         this.inputIndication = inputIndication;
     }
 
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+    }
+
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
     }
@@ -98,7 +102,7 @@ public class Model {
     }
 
     // generates are returns newest user input, while also handling background processes
-    private String generateText(String prompt, boolean print) throws IOException {
+    public String generateText(String prompt, boolean print) throws IOException {
         conversationHistory.add(new Message("user", prompt));
         requestBody.put("messages", conversationHistory);
 
@@ -111,12 +115,12 @@ public class Model {
         httpPost.setEntity(new StringEntity(getJson(), StandardCharsets.UTF_8));
 
         //sending API
-        String response = speechIndication;
+        String response;
         if (print){
-            System.out.print(response);
-            response += Services.applyAPIRequest(httpPost, chunk -> System.out.print(chunk));
+            System.out.print(speechIndication);
+            response = Services.applyAPIRequest(httpPost, chunk -> System.out.print(chunk));
         } else {
-            response += Services.applyAPIRequest(httpPost);
+            response = Services.applyAPIRequest(httpPost);
         }
         conversationHistory.add(new Message("assistant", response));
         debugPrint("added to history: " + response);
