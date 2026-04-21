@@ -1,0 +1,16 @@
+{
+  "terminal.integrated.defaultProfile.windows": "PowerShell UTF-8",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell UTF-8": {
+      "source": "PowerShell",
+      "args": [
+        "-NoExit",
+        "-Command",
+        "[Console]::InputEncoding=[System.Text.UTF8Encoding]::new(); [Console]::OutputEncoding=[System.Text.UTF8Encoding]::new(); chcp 65001 > $null"
+      ]
+    }
+  },
+  "terminal.integrated.fontFamily": "Cascadia Mono, Microsoft YaHei UI Mono, Consolas, 'Courier New', monospace",
+  "files.encoding": "utf8",
+  "java.configuration.updateBuildConfiguration": "interactive"
+}
