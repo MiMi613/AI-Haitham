@@ -1,13 +1,14 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class Model {
@@ -18,10 +19,10 @@ public class Model {
     private String provider = null;
     private String apiURL = "https://api.deepseek.com/v1/chat/completions";
     private Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+    private ModelApplication modelApplication;
 
     private List<Message> conversationHistory;
     private Map<String, Object> requestBody;
-    private HttpPost httpPost;
     private String systemPrompt = "";
     private int maxHistoryLength = 30;
     private int token_limit = 8100;
@@ -34,6 +35,7 @@ public class Model {
     public Model() throws JsonProcessingException {
         this.conversationHistory = new ArrayList<>();
         this.requestBody = new HashMap<>();
+        this.modelApplication = new ApiModelApplication();
 
         this.initJson();
 
@@ -46,6 +48,7 @@ public class Model {
 
     public void setTemperature(double temperature) {
         this.temperature = temperature;
+        requestBody.put("temperature", temperature);
     }
 
     public void setIntroduction(String introduction) {
@@ -62,35 +65,43 @@ public class Model {
         this.maxHistoryLength = maxHistoryLength;
     }
 
+    public void setModelApplication(ModelApplication modelApplication) {
+        this.modelApplication = Objects.requireNonNull(modelApplication, "modelApplication");
+    }
+
     // get API from Path
     private String API_KEY(){
         return  System.getenv(APIKeyOwner.trim());
     }
 
-    // prepare http message
-    private void initHTTPpost(){
+    public String authorizationHeader() {
+        return "Bearer " + API_KEY().trim();
+    }
 
-        httpPost.setHeader("Content-Type", "application/json; charset=UTF-8");
-        httpPost.setHeader("Accept", "application/json; charset=UTF-8");
-        httpPost.setHeader("Authorization", "Bearer " + API_KEY().trim());
-
+    public String getApiURL() {
+        return apiURL;
     }
 
     // prepare json body
     private void initJson() throws JsonProcessingException {
+        refreshRequestBodyConfig();
+    }
 
+    private void refreshRequestBodyConfig() {
         requestBody.put("model", model);
         requestBody.put("max_tokens", token_limit);
         requestBody.put("temperature", temperature);
         requestBody.put("stream", stream);
 
-        // if from hugging face or similar, provider is needed
         if (provider != null) {
             requestBody.put("provider", provider);
+        } else {
+            requestBody.remove("provider");
         }
     }
 
-    private String getJson() throws JsonProcessingException {
+    public String getJson() throws JsonProcessingException {
+        refreshRequestBodyConfig();
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(requestBody);
     }
@@ -109,19 +120,7 @@ public class Model {
         String json = getJson();
         debugPrint("REQUEST BODY: " + json);
 
-        //fresh httpPost
-        httpPost = new HttpPost(apiURL);
-        initHTTPpost();
-        httpPost.setEntity(new StringEntity(getJson(), StandardCharsets.UTF_8));
-
-        //sending API
-        String response;
-        if (print){
-            System.out.print(speechIndication);
-            response = Services.applyAPIRequest(httpPost, chunk -> System.out.print(chunk));
-        } else {
-            response = Services.applyAPIRequest(httpPost);
-        }
+        String response = modelApplication.call(this, print);
         conversationHistory.add(new Message("assistant", response));
         debugPrint("added to history: " + response);
         maintainHistory();
@@ -130,6 +129,7 @@ public class Model {
 
     private void setToken_limit(int token_limit) {
         this.token_limit = token_limit;
+        requestBody.put("max_tokens", token_limit);
     }
 
     private void processCommand(String[] command) throws IOException {
@@ -147,6 +147,10 @@ public class Model {
 
     public void setSpeechIndication(String newSpeechIndication) {
         this.speechIndication  = newSpeechIndication;
+    }
+
+    public String getSpeechIndication() {
+        return speechIndication;
     }
 
     public void visit() throws IOException {
