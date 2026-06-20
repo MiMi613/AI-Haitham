@@ -12,5 +12,5 @@
   },
   "terminal.integrated.fontFamily": "Cascadia Mono, Microsoft YaHei UI Mono, Consolas, 'Courier New', monospace",
   "files.encoding": "utf8",
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "disabled"
 }
