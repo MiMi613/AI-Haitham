@@ -16,6 +16,7 @@ public class Model {
     private final List<Message> conversationHistory;
 
     private double temperature = 0.7;
+    private String name = "";
     private String ollamaModel = DEFAULT_OLLAMA_MODEL;
     private String systemPrompt = "";
     private final boolean stream = true;
@@ -75,6 +76,10 @@ public class Model {
         this.temperature = temperature;
     }
 
+    public void setName(String name) {
+        this.name = name == null ? "" : name.trim();
+    }
+
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
     }
@@ -96,6 +101,10 @@ public class Model {
 
     public String getOllamaModel() {
         return ollamaModel;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getIntroduction() {

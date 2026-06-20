@@ -5,6 +5,10 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import ai.haitham.client.OllamaClient;
@@ -14,6 +18,7 @@ import ai.haitham.ui.ConsoleSessionRunner;
 
 public class Main {
 
+    private static final String CHARACTERS_DIRECTORY = "characters";
     private static final ArrayList<Model> characters = new ArrayList<>();
     private static final OllamaClient ollamaClient = new OllamaClient();
     private static final ConsoleSessionRunner consoleRunner = new ConsoleSessionRunner();
@@ -24,18 +29,92 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
-        characters.add(alHaitham());
-        characters.add(lisa());
+        characters.addAll(loadCharacters());
 
         try (Scanner sc = new Scanner(System.in, StandardCharsets.UTF_8)) {
             String host = sc.nextLine();
-            switch (host) {
-                case "AlHaitham" -> consoleRunner.visit(characters.get(0));
-                case "Lisa" -> consoleRunner.visit(characters.get(1));
-                case "C" -> conversation();
-                default -> System.out.println("Invalid input");
+            if ("C".equals(host)) {
+                conversation();
+                return;
+            }
+
+            for (Model character : characters) {
+                if (character.getName().equals(host)) {
+                    consoleRunner.visit(character);
+                    return;
+                }
+            }
+
+            System.out.println("Invalid input");
+        }
+    }
+
+    /**
+     * Loads every character configuration file from the characters resource directory.
+     */
+    static List<Model> loadCharacters() throws IOException {
+        ArrayList<Model> loadedCharacters = new ArrayList<>();
+        List<String> fileNames = ResourceService.listClasspathDirectory(CHARACTERS_DIRECTORY);
+        fileNames.sort(Comparator.naturalOrder());
+        for (String fileName : fileNames) {
+            loadedCharacters.add(loadCharacter(fileName));
+        }
+        return loadedCharacters;
+    }
+
+    /**
+     * Reads a character file using Scanner delimiters and returns a configured model.
+     */
+    static Model loadCharacter(String characterFileName) throws IOException {
+        String content = ResourceService.readClasspathResource(CHARACTERS_DIRECTORY + "/" + characterFileName);
+
+        Map<String, String> fields = new LinkedHashMap<>();
+
+        try (Scanner scanner = new Scanner(content)) {
+            scanner.useDelimiter("\\R");
+
+            while (scanner.hasNext()) {
+                String line = scanner.next().stripTrailing();
+
+                if (line.isBlank() || line.startsWith("#")) {
+                    continue;
+                }
+
+                try (Scanner lineScanner = new Scanner(line)) {
+                    lineScanner.useDelimiter("\\s*[:=]\\s*");
+                    if (!lineScanner.hasNext()) {
+                        continue;
+                    }
+
+                    String key = lineScanner.next().trim();
+                    String value = lineScanner.hasNext() ? lineScanner.next() : "";
+                    fields.put(key, value);
+                }
             }
         }
+
+        String client = fields.getOrDefault("client", "ollama").trim().toLowerCase();
+        if (!"ollama".equals(client)) {
+            throw new IllegalArgumentException("Unsupported client '" + client + "' in character file: " + characterFileName);
+        }
+
+        Model model = new Model(ollamaClient);
+        model.setName(fields.getOrDefault("name", characterFileName));
+        model.setOllamaModel(fields.getOrDefault("model", "llama3.2:latest"));
+
+        String temperature = fields.getOrDefault("temperature", "0.7");
+        model.setTemperature(Double.parseDouble(temperature));
+
+        model.setIntroduction(fields.getOrDefault("introduction", "Hi, how can I help?"));
+        model.setSpeechIndication(fields.getOrDefault("speechIndication", ">_"));
+        model.setInputIndication(fields.getOrDefault("inputIndication", ": "));
+
+        String systemPromptFile = fields.get("systemPromptFile");
+        if (systemPromptFile == null || systemPromptFile.isBlank()) {
+            throw new IllegalArgumentException("Character file must define systemPromptFile: " + characterFileName);
+        }
+        model.setSystemPrompt(ResourceService.readClasspathResource(systemPromptFile));
+        return model;
     }
 
     /**
@@ -68,29 +147,4 @@ public class Main {
         }
     }
 
-    /**
-     * Builds and configures the Al-Haitham character model.
-     */
-    static Model alHaitham() throws IOException {
-        Model ret = new Model(ollamaClient);
-        String prompt = ResourceService.readClasspathResource("HaithamPrompt.txt");
-        ret.setSystemPrompt(prompt);
-        ret.setIntroduction("I hope you hesitated before contacting me. What do you need?");
-        ret.setSpeechIndication("Al-Haitham: ");
-        ret.setTemperature(0.7);
-        return ret;
-    }
-
-    /**
-     * Builds and configures the Lisa character model.
-     */
-    static Model lisa() throws IOException {
-        Model ret = new Model(ollamaClient);
-        String prompt = ResourceService.readClasspathResource("LisaPrompt.txt");
-        ret.setSystemPrompt(prompt);
-        ret.setIntroduction("Hey cutie, would you like to join me for an afternoon tea?");
-        ret.setSpeechIndication("Lisa:       ");
-        ret.setTemperature(0.8);
-        return ret;
-    }
 }
