@@ -1,0 +1,8 @@
+ai\haitham\client\OllamaClient.class
+ai\haitham\app\Main.class
+ai\haitham\model\Model.class
+ai\haitham\ui\ConsoleSessionRunner.class
+ai\haitham\model\Message.class
+ai\haitham\client\StreamingApiClient.class
+ai\haitham\resource\ResourceService.class
+ai\haitham\diagnostics\StreamDiagnostics.class
