@@ -12,5 +12,16 @@
   },
   "terminal.integrated.fontFamily": "Cascadia Mono, Microsoft YaHei UI Mono, Consolas, 'Courier New', monospace",
   "files.encoding": "utf8",
-  "java.configuration.updateBuildConfiguration": "disabled"
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-23",
+      "path": "C:/Program Files/Java/jdk-23",
+      "default": true
+    }
+  ],
+  "java.jdt.ls.java.home": "C:/Program Files/Java/jdk-23",
+  "java.import.maven.enabled": true,
+  "java.autobuild.enabled": true,
+  "maven.terminal.useJavaHome": true
 }

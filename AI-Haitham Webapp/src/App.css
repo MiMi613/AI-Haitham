@@ -1,0 +1,212 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  background: #0a0d0f;
+  color: #b5c4c9;
+  font-family: 'Consolas', 'Courier New', 'Fira Code', monospace;
+  font-size: 15px;
+  overflow: hidden;
+}
+
+.terminal-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 960px;
+  margin: 0 auto;
+  background: #0d1114;
+  border-left: 1px solid #1a2429;
+  border-right: 1px solid #1a2429;
+}
+
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #11181d;
+  border-bottom: 1px solid #1e2a30;
+  color: #7a8b94;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  flex-shrink: 0;
+}
+
+.back-btn {
+  background: none;
+  border: 1px solid #2a3a42;
+  color: #7a8b94;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+.back-btn:hover {
+  border-color: #4a6a7a;
+  color: #c0d0d8;
+}
+
+/* Character Select Screen */
+.character-select {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px;
+}
+.character-select h2 {
+  color: #5a7a8a;
+  font-weight: normal;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.char-btn {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px 20px;
+  background: #11181d;
+  border: 1px solid #1e2a30;
+  color: #c0d0d8;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.char-btn:hover {
+  border-color: #3a5a6a;
+  background: #151f27;
+}
+.char-name {
+  font-size: 16px;
+  color: #5ab0c8;
+}
+.char-intro {
+  font-size: 13px;
+  color: #7a8b94;
+  font-style: italic;
+}
+
+/* Output area */
+.terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.terminal-output::-webkit-scrollbar {
+  width: 6px;
+}
+.terminal-output::-webkit-scrollbar-track {
+  background: #0d1114;
+}
+.terminal-output::-webkit-scrollbar-thumb {
+  background: #1e2a30;
+  border-radius: 3px;
+}
+
+.message {
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.prefix {
+  font-weight: bold;
+}
+.message.user .prefix { color: #6a8a6a; }
+.message.assistant .prefix { color: #5ab0c8; }
+.message.system .prefix { color: #8a7a5a; }
+.message.user { color: #a0b8a0; }
+.message.assistant { color: #c0d0d8; }
+.message.system { color: #b0a080; font-style: italic; }
+
+.streaming .cursor {
+  animation: blink 0.8s infinite;
+  color: #5ab0c8;
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Input area */
+.terminal-input-area {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: #11181d;
+  border-top: 1px solid #1e2a30;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.prompt {
+  color: #6a8a6a;
+  font-weight: bold;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #c0d0d8;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  caret-color: #5ab0c8;
+}
+.terminal-input::placeholder {
+  color: #3a4a52;
+}
+
+.send-btn {
+  background: #1a3038;
+  border: 1px solid #2a4a55;
+  color: #7ab8c8;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  border-radius: 3px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.send-btn:hover:not(:disabled) {
+  background: #1e404a;
+  border-color: #3a6a78;
+}
+.send-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.send-btn.stop {
+  background: #381a1a;
+  border-color: #552a2a;
+  color: #c87a7a;
+}
+.send-btn.stop:hover {
+  background: #4a1e1e;
+  border-color: #783a3a;
+}

@@ -1,0 +1,14 @@
+ai\haitham\client\OllamaClient.class
+ai\haitham\service\CharacterService.class
+ai\haitham\controller\CharacterController.class
+ai\haitham\model\Model.class
+ai\haitham\AiHaithamApplication.class
+ai\haitham\client\StreamingApiClient.class
+ai\haitham\controller\ChatController.class
+ai\haitham\config\CorsConfig$1.class
+ai\haitham\app\Main.class
+ai\haitham\ui\ConsoleSessionRunner.class
+ai\haitham\model\Message.class
+ai\haitham\resource\ResourceService.class
+ai\haitham\config\CorsConfig.class
+ai\haitham\diagnostics\StreamDiagnostics.class
